@@ -1,0 +1,6 @@
+{
+  "name": "SurakshaPath - Community Safety & Dynamic Safe-Routing",
+  "description": "Proactive community safety-mapping and dynamic safe-routing platform shifting women's mobility from reactive SOS alerts to predictive, infrastructure-led prevention.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

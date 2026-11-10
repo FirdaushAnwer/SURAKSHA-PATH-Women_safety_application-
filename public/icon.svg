@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="roseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185" />
+      <stop offset="50%" stop-color="#f43f5e" />
+      <stop offset="100%" stop-color="#881337" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="#180a1c"/>
+  <path d="M256 64 C350 110, 410 130, 410 240 C410 350, 330 420, 256 460 C182 420, 102 350, 102 240 C102 130, 162 110, 256 64 Z" fill="url(#roseGradient)" filter="url(#glow)"/>
+  <path d="M256 94 C330 134, 380 152, 380 240 C380 330, 314 390, 256 426 C198 390, 132 330, 132 240 C132 152, 182 134, 256 94 Z" fill="#250f2c" stroke="#fecdd3" stroke-width="4"/>
+  <!-- Lotus & Guard Star -->
+  <circle cx="256" cy="245" r="48" fill="#f43f5e" opacity="0.3"/>
+  <path d="M256 165 C264 205, 290 225, 330 235 C290 245, 264 265, 256 305 C248 265, 222 245, 182 235 C222 225, 248 205, 256 165 Z" fill="#fff1f2"/>
+  <circle cx="256" cy="235" r="14" fill="#fb7185"/>
+  <!-- Heart Accent -->
+  <path d="M256 345 C256 345, 230 325, 218 308 C204 288, 224 270, 242 284 L256 298 L270 284 C288 270, 308 288, 294 308 C282 325, 256 345, 256 345 Z" fill="#fb7185"/>
+</svg>
