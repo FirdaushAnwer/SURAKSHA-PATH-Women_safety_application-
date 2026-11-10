@@ -20,6 +20,7 @@ import { SafetyWalkTimerModal } from './components/SafetyWalkTimerModal';
 import { EmergencyContactsModal } from './components/EmergencyContactsModal';
 import { StrobeDeterrentModal } from './components/StrobeDeterrentModal';
 import { AudioMemoModal } from './components/AudioMemoModal';
+import { SurakshaAiCompanionModal } from './components/SurakshaAiCompanionModal';
 
 import {
   findOptimalRoute,
@@ -86,6 +87,7 @@ export default function App() {
   const [isContactsModalOpen, setIsContactsModalOpen] = useState(false);
   const [isStrobeModalOpen, setIsStrobeModalOpen] = useState(false);
   const [isAudioMemoModalOpen, setIsAudioMemoModalOpen] = useState(false);
+  const [isAiCompanionOpen, setIsAiCompanionOpen] = useState(false);
   const [havenAlertNotice, setHavenAlertNotice] = useState<string | null>(null);
 
   // Live Pedestrian Walk Simulator
@@ -340,6 +342,7 @@ export default function App() {
       onChangeTheme={setCurrentThemeId}
       onOpenSimulator={() => setIsSimulatorModalOpen(true)}
       onOpenDossier={() => setIsDossierModalOpen(true)}
+      onOpenAiCompanion={() => setIsAiCompanionOpen(true)}
       onTriggerSOS={() => {
         setIsSosActive(true);
         setIsShareModalOpen(true);
@@ -550,6 +553,7 @@ export default function App() {
         onClose={() => setIsContactsModalOpen(false)}
         theme={currentTheme}
         tripCode={tripCode}
+        userCoords={userLocation}
       />
 
       <StrobeDeterrentModal
@@ -562,6 +566,24 @@ export default function App() {
         onClose={() => setIsAudioMemoModalOpen(false)}
         theme={currentTheme}
         userCoords={userLocation}
+      />
+
+      <SurakshaAiCompanionModal
+        isOpen={isAiCompanionOpen}
+        onClose={() => setIsAiCompanionOpen(false)}
+        theme={currentTheme}
+        userCoords={userLocation}
+        currentHour={currentHour}
+        safetyScore={surakshaRoute?.averageSafetyScore ?? 0.86}
+        nearestHaven={safeHavens[0]}
+        onTriggerSos={() => {
+          setIsSosActive(true);
+          setIsShareModalOpen(true);
+        }}
+        onTriggerFakeCall={() => setIsFakeCallModalOpen(true)}
+        onTriggerSiren={() => setIsStrobeModalOpen(true)}
+        onRerouteToHaven={handleRerouteToHaven}
+        onOpenTripShare={() => setIsShareModalOpen(true)}
       />
     </AndroidFrame>
   );

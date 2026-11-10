@@ -9,7 +9,8 @@ import {
   Lightbulb,
   Eye,
   Users,
-  Clock
+  Clock,
+  Info
 } from 'lucide-react';
 import { calculateStreetSafetyScore, calculateEdgeCost } from '../utils/safetyMath';
 
@@ -44,7 +45,7 @@ export const FormulaSimulationModal: React.FC<FormulaSimulationModalProps> = ({
   const impedanceMultiplier = Number((1 + alpha * penaltyFactor).toFixed(3));
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fade-in">
       <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
         <div className="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
@@ -54,13 +55,13 @@ export const FormulaSimulationModal: React.FC<FormulaSimulationModalProps> = ({
             </div>
             <div>
               <h2 className="text-sm font-bold text-slate-100 flex items-center gap-1.5">
-                <span>Slide 9 Mathematical Safety Engine</span>
+                <span>SurakshaPath Mathematical Safety Lab</span>
                 <span className="bg-emerald-950 text-emerald-400 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-800/60">
-                  A* Cost Model
+                  Interactive Model
                 </span>
               </h2>
               <p className="text-[10px] text-slate-400">
-                Seva First 2026 Analytical Simulation Workbench
+                Inspect how lighting, crowd, and impedance formulas protect commuters
               </p>
             </div>
           </div>
@@ -75,210 +76,145 @@ export const FormulaSimulationModal: React.FC<FormulaSimulationModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-4 overflow-y-auto text-xs">
+        <div className="p-4 space-y-4 overflow-y-auto text-xs text-slate-200">
           {/* Formula Display Box */}
           <div className="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2 font-mono text-[11px]">
-            <div className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider font-sans">
-              1. Street Safety Score Formula:
+            <div className="text-[10px] uppercase font-bold text-emerald-400 flex items-center gap-1">
+              <Sparkles size={11} /> Safety Score Formula: S(e,t)
             </div>
-            <div className="p-2 bg-slate-900 rounded-xl text-slate-200 overflow-x-auto text-[11px]">
-              S(e,t) = 0.35·L(e) + 0.25·O(e) + 0.20·C(e,t) − 0.20·min(1, I(e,t)/Imax)
+            <div className="p-2.5 bg-slate-900 rounded-xl text-emerald-300 font-semibold border border-slate-800">
+              S(e,t) = 0.35·L + 0.25·O + 0.20·C − 0.20·min(1, I/Imax)
             </div>
-
-            <div className="text-[10px] text-sky-400 font-bold uppercase tracking-wider font-sans pt-1">
-              2. Routing Edge Cost Formula:
-            </div>
-            <div className="p-2 bg-slate-900 rounded-xl text-slate-200 overflow-x-auto text-[11px]">
-              W(e,t) = d(e) · (1 + α · (1 − S(e,t))²)
-            </div>
-          </div>
-
-          {/* Live Output Card */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="bg-emerald-950/40 border border-emerald-500/40 p-3 rounded-2xl text-center">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold block">
-                Calculated Safety Score S(e,t)
-              </span>
-              <div className="font-extrabold text-2xl text-emerald-300 font-mono mt-1">
-                {currentSafetyScore.toFixed(3)}
-              </div>
-              <span
-                className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full mt-1 inline-block ${
-                  currentSafetyScore >= 0.7
-                    ? 'bg-emerald-500/20 text-emerald-300'
-                    : currentSafetyScore >= 0.45
-                    ? 'bg-amber-500/20 text-amber-300'
-                    : 'bg-red-500/20 text-red-300'
-                }`}
-              >
-                {currentSafetyScore >= 0.7 ? 'Safe Lit Corridor' : currentSafetyScore >= 0.45 ? 'Moderate Caution' : 'High Risk Alley'}
-              </span>
-            </div>
-
-            <div className="bg-sky-950/40 border border-sky-500/40 p-3 rounded-2xl text-center">
-              <span className="text-[10px] text-slate-400 uppercase font-semibold block">
-                A* Edge Cost W(e,t)
-              </span>
-              <div className="font-extrabold text-2xl text-sky-300 font-mono mt-1">
-                {currentCost.toFixed(1)}
-              </div>
-              <span className="text-[10px] text-slate-400 font-mono block mt-1">
-                Multiplier: {impedanceMultiplier}x
-              </span>
+            <div className="text-[10px] text-slate-400 font-sans space-y-0.5">
+              <div>• <strong>L</strong> = Lighting Index (0 to 1) · Weight: 35%</div>
+              <div>• <strong>O</strong> = Openness & Sightline (0 to 1) · Weight: 25%</div>
+              <div>• <strong>C</strong> = Active Crowd & Open Shops (0 to 1) · Weight: 20%</div>
+              <div>• <strong>I</strong> = Time-Decayed Verified Hazard Reports · Penalty: 20%</div>
             </div>
           </div>
 
           {/* Interactive Sliders */}
           <div className="space-y-3 bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800">
-            <div className="font-bold text-slate-200 text-xs">
-              Interactive Parameter Tweaks
+            <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+              Test Edge Parameters:
             </div>
 
-            {/* Alpha slider */}
+            {/* Lighting Slider */}
             <div className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-300 font-semibold">
-                  Safety Aversion Coefficient (α):
+              <div className="flex justify-between text-[11px]">
+                <span className="flex items-center gap-1 text-amber-300">
+                  <Lightbulb size={12} /> Lighting Index (L):
                 </span>
-                <span className="font-mono text-emerald-400 font-bold">
-                  α = {alpha} {alpha === 0 ? '(Standard GPS)' : alpha === 3 ? '(SurakshaPath Recommended)' : '(Extreme)'}
-                </span>
+                <span className="font-mono font-bold text-white">{(lighting * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
-                min={0}
-                max={5}
-                step={0.5}
-                value={alpha}
-                onChange={(e) => setAlpha(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-              />
-            </div>
-
-            {/* Lighting slider */}
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-300">
-                  Street Lighting L(e):
-                </span>
-                <span className="font-mono text-sky-400">
-                  {(lighting * 100).toFixed(0)}% ({lighting < 0.3 ? 'Dark Alleys' : 'Bright LED'})
-                </span>
-              </div>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.05}
+                min="0"
+                max="1"
+                step="0.05"
                 value={lighting}
-                onChange={(e) => setLighting(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-500"
+                onChange={(e) => setLighting(parseFloat(e.target.value))}
+                className="w-full accent-amber-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
               />
             </div>
 
-            {/* Openness slider */}
+            {/* Openness Slider */}
             <div className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-300">
-                  Sightline Openness O(e):
+              <div className="flex justify-between text-[11px]">
+                <span className="flex items-center gap-1 text-sky-300">
+                  <Eye size={12} /> Openness / Sightline (O):
                 </span>
-                <span className="font-mono text-cyan-400">
-                  {(openness * 100).toFixed(0)}%
-                </span>
+                <span className="font-mono font-bold text-white">{(openness * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
-                min={0}
-                max={1}
-                step={0.05}
+                min="0"
+                max="1"
+                step="0.05"
                 value={openness}
-                onChange={(e) => setOpenness(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                onChange={(e) => setOpenness(parseFloat(e.target.value))}
+                className="w-full accent-sky-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
               />
             </div>
 
-            {/* Crowd slider */}
+            {/* Crowd Slider */}
             <div className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-300">
-                  Crowd Diversity & Density C(e,t):
+              <div className="flex justify-between text-[11px]">
+                <span className="flex items-center gap-1 text-emerald-300">
+                  <Users size={12} /> Crowd & Open Shops (C):
                 </span>
-                <span className="font-mono text-purple-400">
-                  {(crowd * 100).toFixed(0)}%
-                </span>
+                <span className="font-mono font-bold text-white">{(crowd * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
-                min={0}
-                max={1}
-                step={0.05}
+                min="0"
+                max="1"
+                step="0.05"
                 value={crowd}
-                onChange={(e) => setCrowd(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500"
+                onChange={(e) => setCrowd(parseFloat(e.target.value))}
+                className="w-full accent-emerald-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
               />
             </div>
 
-            {/* Incidents slider */}
+            {/* Incident Slider */}
             <div className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-300">
-                  Time-Decayed Incident Score I(e,t):
+              <div className="flex justify-between text-[11px]">
+                <span className="flex items-center gap-1 text-rose-300">
+                  <AlertTriangle size={12} /> Decayed Incident Score (I):
                 </span>
-                <span className="font-mono text-red-400">
-                  {incidentScore.toFixed(1)} / 5.0
-                </span>
+                <span className="font-mono font-bold text-white">{incidentScore.toFixed(1)} / 5.0</span>
               </div>
               <input
                 type="range"
-                min={0}
-                max={5}
-                step={0.2}
+                min="0"
+                max="5"
+                step="0.2"
                 value={incidentScore}
-                onChange={(e) => setIncidentScore(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-red-500"
+                onChange={(e) => setIncidentScore(parseFloat(e.target.value))}
+                className="w-full accent-rose-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+              />
+            </div>
+
+            {/* Alpha Detour Slider */}
+            <div className="space-y-1 pt-1 border-t border-slate-800">
+              <div className="flex justify-between text-[11px]">
+                <span className="flex items-center gap-1 text-purple-300">
+                  <Sliders size={12} /> Safety Aversion Detour (α):
+                </span>
+                <span className="font-mono font-bold text-white">{alpha.toFixed(1)}</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="6"
+                step="0.5"
+                value={alpha}
+                onChange={(e) => setAlpha(parseFloat(e.target.value))}
+                className="w-full accent-purple-400 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
               />
             </div>
           </div>
 
-          {/* Simulation Benchmark Preset buttons */}
-          <div className="space-y-2">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
-              Load Slide 9 Benchmark Presets
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => {
-                  setLighting(0.15);
-                  setOpenness(0.25);
-                  setCrowd(0.10);
-                  setIncidentScore(4.2);
-                  setAlpha(0);
-                  setDistanceMeters(1200);
-                }}
-                className="p-2.5 rounded-xl bg-slate-950 border border-red-500/40 text-left hover:bg-slate-900 transition cursor-pointer"
-              >
-                <div className="font-bold text-red-400 text-xs">Shortest Path (GPS)</div>
-                <div className="text-[10px] text-slate-400 mt-0.5">
-                  1,200m · Avg Safety 0.38 (High Risk)
-                </div>
-              </button>
+          {/* Real-time Calculation Result */}
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+              <div className="text-[10px] text-slate-400 uppercase font-semibold">Calculated Safety Score</div>
+              <div className="font-mono font-bold text-lg text-emerald-400 mt-1">
+                {(currentSafetyScore * 100).toFixed(0)}%
+              </div>
+              <div className="text-[9px] text-slate-500 mt-0.5">
+                {currentSafetyScore >= 0.75 ? 'Safe Lit Corridor' : currentSafetyScore >= 0.45 ? 'Moderate Caution' : 'High Risk Area'}
+              </div>
+            </div>
 
-              <button
-                onClick={() => {
-                  setLighting(0.95);
-                  setOpenness(0.90);
-                  setCrowd(0.85);
-                  setIncidentScore(0.0);
-                  setAlpha(3);
-                  setDistanceMeters(1380);
-                }}
-                className="p-2.5 rounded-xl bg-slate-950 border border-emerald-500/40 text-left hover:bg-slate-900 transition cursor-pointer"
-              >
-                <div className="font-bold text-emerald-400 text-xs">SurakshaPath Route</div>
-                <div className="text-[10px] text-slate-400 mt-0.5">
-                  1,380m · Avg Safety 0.86 (Safe Corridor)
-                </div>
-              </button>
+            <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+              <div className="text-[10px] text-slate-400 uppercase font-semibold">A* Perceived Distance</div>
+              <div className="font-mono font-bold text-lg text-rose-300 mt-1">
+                {Math.round(currentCost)}m
+              </div>
+              <div className="text-[9px] text-slate-500 mt-0.5">
+                Physical {distanceMeters}m × {impedanceMultiplier}x penalty
+              </div>
             </div>
           </div>
         </div>

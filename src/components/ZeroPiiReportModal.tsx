@@ -13,7 +13,8 @@ import {
   Lock,
   X,
   Radio,
-  Fingerprint
+  Fingerprint,
+  Heart
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { IncidentReport } from '../utils/safetyMath';
@@ -59,17 +60,17 @@ export const ZeroPiiReportModal: React.FC<ZeroPiiReportModalProps> = ({
   const handleAuditSubmit = async () => {
     setIsSubmitting(true);
 
-    // Realistic hardware attestation & zero-PII pipeline simulation (Slide 6 & 7)
-    setAttestationStep('1/4: Requesting Android Play Integrity key token...');
+    // Warm, reassuring step-by-step privacy pipeline
+    setAttestationStep('1/4: Securing anonymous cryptographic token...');
+    await new Promise((r) => setTimeout(r, 350));
+
+    setAttestationStep('2/4: Verifying local neighborhood perimeter...');
     await new Promise((r) => setTimeout(r, 400));
 
-    setAttestationStep('2/4: Verifying 500m GNSS on-device geofence...');
-    await new Promise((r) => setTimeout(r, 450));
+    setAttestationStep('3/4: Stripping phone identity, name & IP address...');
+    await new Promise((r) => setTimeout(r, 350));
 
-    setAttestationStep('3/4: Stripping device ID, IP & trajectory data (Zero-PII)...');
-    await new Promise((r) => setTimeout(r, 400));
-
-    setAttestationStep('4/4: Snapping to H3 Res 9 hexagon with 30-min privacy delay...');
+    setAttestationStep('4/4: Publishing anonymous safety warning to protect other women...');
     await new Promise((r) => setTimeout(r, 350));
 
     // Slight coordinate jitter to respect privacy
@@ -97,34 +98,34 @@ export const ZeroPiiReportModal: React.FC<ZeroPiiReportModalProps> = ({
         particleCount: 45,
         spread: 60,
         origin: { y: 0.7 },
-        colors: ['#10b981', '#38bdf8', '#f59e0b'],
+        colors: ['#10b981', '#38bdf8', '#f59e0b', '#f43f5e'],
       });
     } catch (_) {}
+  };
 
-    setTimeout(() => {
-      setSubmittedSuccess(false);
-      onClose();
-    }, 1800);
+  const handleCloseSuccess = () => {
+    setSubmittedSuccess(false);
+    onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
       <div className="w-full sm:max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
         <div className="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center font-bold">
-              <Fingerprint size={18} />
+            <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center justify-center font-bold">
+              <ShieldCheck size={18} />
             </div>
             <div>
               <h2 className="text-sm font-bold text-slate-100 flex items-center gap-1.5">
-                <span>10-Second Anonymous Audit</span>
+                <span>3-Tap Private Safety Audit</span>
                 <span className="bg-emerald-950 text-emerald-400 text-[9px] font-mono font-bold px-1.5 py-0.2 rounded border border-emerald-800/60">
-                  Zero-PII
+                  100% Anonymous
                 </span>
               </h2>
               <p className="text-[10px] text-slate-400">
-                Play Integrity attestation · No identity or phone stored
+                Warn fellow women commuters about dark spots & hazards
               </p>
             </div>
           </div>
@@ -139,157 +140,167 @@ export const ZeroPiiReportModal: React.FC<ZeroPiiReportModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-4 overflow-y-auto">
+        <div className="p-4 space-y-4 overflow-y-auto text-xs text-slate-200">
           {submittedSuccess ? (
-            <div className="py-8 text-center space-y-3">
-              <div className="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 flex items-center justify-center mx-auto">
-                <Check size={28} />
+            /* Success confirmation */
+            <div className="text-center py-8 space-y-4 animate-fade-in">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center mx-auto">
+                <Check size={32} />
               </div>
-              <h3 className="text-base font-bold text-white">
-                Anonymous Hazard Pinned!
-              </h3>
-              <p className="text-xs text-slate-300 max-w-xs mx-auto">
-                Cryptographic hardware token verified. Snapped to Uber H3 Res 9 grid with 30-min cloaking delay for your privacy.
-              </p>
+
+              <div className="space-y-1">
+                <h3 className="text-base font-bold text-white">Thank You, Sister!</h3>
+                <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+                  Your anonymous safety report has been published to the neighborhood grid. Other women walking nearby will see this spot flagged immediately.
+                </p>
+              </div>
+
+              <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-[11px] text-emerald-400 space-y-1 font-mono">
+                <div>✓ Zero Identity Stored</div>
+                <div>✓ Municipal Civic Work Order Queued</div>
+              </div>
+
+              <button
+                onClick={handleCloseSuccess}
+                className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl text-xs shadow-lg cursor-pointer transition"
+              >
+                Return to Safe Path
+              </button>
+            </div>
+          ) : isSubmitting ? (
+            /* Submitting loading steps */
+            <div className="py-12 flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="w-12 h-12 rounded-full border-4 border-rose-500/30 border-t-rose-500 animate-spin" />
+              <div className="space-y-1">
+                <div className="font-mono text-xs font-bold text-rose-300">
+                  {attestationStep}
+                </div>
+                <div className="text-[10px] text-slate-400">
+                  Guaranteeing 100% privacy & tamper-proof verification
+                </div>
+              </div>
             </div>
           ) : (
-            <>
-              {/* Tap 1: Select Category & Hazard */}
+            /* Main Form */
+            <div className="space-y-4">
+              {/* Category Switcher */}
+              <div className="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded-2xl border border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCategory('environmental');
+                    setSelectedType('broken_light');
+                  }}
+                  className={`py-2 rounded-xl text-center font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                    category === 'environmental'
+                      ? 'bg-rose-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <Lightbulb size={13} />
+                  <span>Infrastructure</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCategory('behavioral');
+                    setSelectedType('catcalling');
+                  }}
+                  className={`py-2 rounded-xl text-center font-bold text-xs transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                    category === 'behavioral'
+                      ? 'bg-amber-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <AlertTriangle size={13} />
+                  <span>Behavioral</span>
+                </button>
+              </div>
+
+              {/* Hazard Selection Cards */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    Step 1: Select Hazard Category
-                  </span>
-                  <div className="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800">
-                    <button
-                      onClick={() => {
-                        setCategory('environmental');
-                        setSelectedType('broken_light');
-                      }}
-                      className={`px-2.5 py-1 text-[11px] font-bold rounded-md transition cursor-pointer ${
-                        category === 'environmental'
-                          ? 'bg-amber-600 text-white'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Environmental
-                    </button>
-                    <button
-                      onClick={() => {
-                        setCategory('behavioral');
-                        setSelectedType('catcalling');
-                      }}
-                      className={`px-2.5 py-1 text-[11px] font-bold rounded-md transition cursor-pointer ${
-                        category === 'behavioral'
-                          ? 'bg-red-600 text-white'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Behavioral
-                    </button>
-                  </div>
-                </div>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                  Select Observed Hazard (Tap 1):
+                </label>
 
                 <div className="grid grid-cols-2 gap-2">
-                  {(category === 'environmental' ? environmentalHazards : behavioralHazards).map(
-                    (hazard) => {
-                      const isSelected = selectedType === hazard.id;
-                      const Icon = hazard.icon;
-                      return (
-                        <button
-                          key={hazard.id}
-                          onClick={() => setSelectedType(hazard.id)}
-                          className={`p-2.5 rounded-xl border text-left transition flex flex-col justify-between cursor-pointer ${
-                            isSelected
-                              ? category === 'environmental'
-                                ? 'bg-amber-950/60 border-amber-500 text-amber-200'
-                                : 'bg-red-950/60 border-red-500 text-red-200'
-                              : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <Icon size={16} />
-                            {isSelected && <Check size={14} className="text-white" />}
-                          </div>
-                          <div>
-                            <div className="text-xs font-bold text-slate-100">{hazard.label}</div>
-                            <div className="text-[9px] text-slate-400 mt-0.5">{hazard.sub}</div>
-                          </div>
-                        </button>
-                      );
-                    }
-                  )}
+                  {(category === 'environmental' ? environmentalHazards : behavioralHazards).map((item) => {
+                    const isSelected = selectedType === item.id;
+                    const Icon = item.icon;
+
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setSelectedType(item.id)}
+                        className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between cursor-pointer ${
+                          isSelected
+                            ? 'bg-rose-500/20 border-rose-500 text-white ring-1 ring-rose-500/40 shadow-md'
+                            : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-1.5">
+                          <Icon size={16} className={isSelected ? 'text-rose-400' : 'text-slate-400'} />
+                          {isSelected && <span className="text-rose-400 text-xs">✓</span>}
+                        </div>
+                        <div>
+                          <div className="font-bold text-xs">{item.label}</div>
+                          <div className="text-[9px] text-slate-400 leading-tight mt-0.5">{item.sub}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Tap 2: Severity Rating */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    Step 2: Hazard Severity Level
-                  </span>
-                  <span className="text-amber-400 font-bold font-mono">
-                    {severity === 5 ? 'Critical (5/5)' : severity === 4 ? 'High (4/5)' : 'Moderate (3/5)'}
+              {/* Severity Level */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Perceived Danger Level:
+                  </label>
+                  <span className="font-mono font-bold text-rose-400 text-xs">
+                    {severity === 5 ? 'Extreme (Avoid completely)' : severity === 4 ? 'High Risk (Dim / Uneasy)' : 'Moderate'}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between gap-1.5 bg-slate-950 p-2 rounded-xl border border-slate-800">
-                  {[1, 2, 3, 4, 5].map((level) => (
+                <div className="flex gap-1.5">
+                  {[2, 3, 4, 5].map((lvl) => (
                     <button
-                      key={level}
-                      onClick={() => setSeverity(level)}
-                      className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                        severity === level
-                          ? 'bg-amber-500 text-slate-950 shadow-md font-mono'
-                          : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'
+                      key={lvl}
+                      type="button"
+                      onClick={() => setSeverity(lvl)}
+                      className={`flex-1 py-1.5 rounded-xl text-center font-mono font-bold text-xs border transition cursor-pointer ${
+                        severity === lvl
+                          ? 'bg-rose-600 text-white border-rose-500 shadow-md'
+                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white'
                       }`}
                     >
-                      ★ {level}
+                      {lvl}★
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Privacy Shield & Attestation Guarantee */}
-              <div className="bg-slate-950/90 rounded-2xl p-3 border border-slate-800 space-y-2 text-xs">
-                <div className="flex items-center gap-2 text-emerald-400 font-bold text-[11px]">
-                  <Lock size={13} />
-                  <span>Hardware-Attested Zero-PII Shield</span>
-                </div>
-
-                <div className="text-[10px] text-slate-400 space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span>Hardware token verifies 500m geofence proximity (blocks spam bots).</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span>30-minute delay buffer prevents tracking individual walking routes.</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span>Auto-converted to municipal work order if verified by ≥ 3 commuters.</span>
-                  </div>
-                </div>
-
-                {isSubmitting && (
-                  <div className="pt-2 border-t border-slate-800/80 text-[11px] font-mono text-emerald-300 animate-pulse flex items-center gap-2">
-                    <Sparkles size={12} />
-                    <span>{attestationStep}</span>
-                  </div>
-                )}
+              {/* Privacy Attestation Banner */}
+              <div className="bg-slate-950 p-2.5 rounded-2xl border border-slate-800 text-[10px] text-slate-400 flex items-center gap-2">
+                <Lock size={14} className="text-emerald-400 shrink-0" />
+                <span>
+                  Your audit is completely anonymous. Location is slightly buffered for privacy.
+                </span>
               </div>
 
-              {/* Tap 3: One-Tap Attest & Submit */}
+              {/* Submit Button */}
               <button
-                disabled={isSubmitting}
+                type="button"
                 onClick={handleAuditSubmit}
-                className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 active:scale-[0.98] text-white font-extrabold text-sm shadow-xl shadow-emerald-600/30 transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                className="w-full py-3.5 bg-rose-600 hover:bg-rose-500 active:scale-98 text-white font-bold text-xs rounded-2xl shadow-xl shadow-rose-600/30 flex items-center justify-center gap-2 cursor-pointer transition"
               >
-                <Fingerprint size={16} />
-                <span>{isSubmitting ? 'Verifying Hardware Token...' : 'Pin Anonymous Audit (3rd Tap)'}</span>
+                <Sparkles size={14} />
+                <span>Publish Anonymous Safety Audit</span>
               </button>
-            </>
+            </div>
           )}
         </div>
       </div>

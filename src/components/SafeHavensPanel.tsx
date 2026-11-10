@@ -53,14 +53,14 @@ export const SafeHavensPanel: React.FC<SafeHavensPanelProps> = ({
       case 'fuel_station':
         return { label: 'Lit 24hr Station', color: 'bg-amber-500/20 text-amber-300 border-amber-500/40' };
       case 'metro_cisf':
-        return { label: 'Metro Armed CISF', color: 'bg-sky-500/20 text-sky-300 border-sky-500/40' };
+        return { label: 'CISF Security Gate', color: 'bg-sky-500/20 text-sky-300 border-sky-500/40' };
     }
   };
 
   return (
     <div className={`flex flex-col h-full ${theme.bgApp} ${theme.textPrimary} overflow-y-auto`}>
       {/* Top Banner */}
-      <div className={`p-3 ${theme.bgHeader} border-b ${theme.borderBase} space-y-1.5`}>
+      <div className={`p-3.5 ${theme.bgHeader} border-b ${theme.borderBase} space-y-2`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center justify-center">
@@ -82,18 +82,19 @@ export const SafeHavensPanel: React.FC<SafeHavensPanelProps> = ({
         </div>
 
         <div className={`p-2.5 rounded-xl text-[11px] border ${theme.borderHighlight} bg-rose-500/10 text-rose-200 flex items-center gap-2`}>
-          <Sparkles size={14} className="text-rose-400 shrink-0" />
+          <HeartHandshake size={15} className="shrink-0 text-rose-400" />
           <span>
-            Feeling followed or unsafe? Tap <strong>"Flee to Haven"</strong> to immediately re-route via illuminated corridors to a staffed desk.
+            If you ever feel unsafe or followed, head immediately to any of these illuminated safe points. Staff are on duty to shelter you.
           </span>
         </div>
       </div>
 
-      {/* Haven Cards */}
+      {/* Havens List */}
       <div className="p-3 space-y-2.5">
         {sortedHavens.map((haven) => {
           const badge = getHavenBadge(haven.type);
-          const walkMinutes = Math.max(1, Math.round((haven.distanceMeters || 300) / 80));
+          const dist = haven.distanceMeters ?? 300;
+          const walkMinutes = Math.max(1, Math.round(dist / 75));
           const isPinkBooth = haven.type === 'police_pink_booth';
 
           return (
@@ -124,7 +125,7 @@ export const SafeHavensPanel: React.FC<SafeHavensPanelProps> = ({
                     {badge.label}
                   </span>
                   <div className="text-[11px] font-mono font-bold text-rose-300 mt-1">
-                    {haven.distanceMeters}m ({walkMinutes}m walk)
+                    {dist}m ({walkMinutes} min walk)
                   </div>
                 </div>
               </div>
@@ -149,7 +150,7 @@ export const SafeHavensPanel: React.FC<SafeHavensPanelProps> = ({
                   className={`py-2 px-2.5 rounded-xl ${theme.accentBg} text-white font-bold text-[11px] flex items-center justify-center gap-1.5 shadow-md ${theme.accentGlow} transition cursor-pointer active:scale-95`}
                 >
                   <Navigation size={12} />
-                  <span>Flee to Haven</span>
+                  <span>Escort to Sanctuary</span>
                 </button>
 
                 <a

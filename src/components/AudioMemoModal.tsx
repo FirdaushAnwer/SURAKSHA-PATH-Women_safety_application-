@@ -4,7 +4,20 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Play, Pause, Trash2, ShieldCheck, X, CheckCircle2, Clock } from 'lucide-react';
+import {
+  Mic,
+  Square,
+  Play,
+  Pause,
+  Trash2,
+  ShieldCheck,
+  X,
+  CheckCircle2,
+  Clock,
+  Download,
+  MapPin,
+  Volume2
+} from 'lucide-react';
 import { AppTheme } from '../utils/themeConfig';
 
 interface AudioMemo {
@@ -46,6 +59,9 @@ export const AudioMemoModal: React.FC<AudioMemoModalProps> = ({
       setIsRecording(false);
       setRecordingSeconds(0);
       if (timerRef.current) clearInterval(timerRef.current);
+      if (audioElementRef.current) {
+        audioElementRef.current.pause();
+      }
     }
   }, [isOpen]);
 
@@ -87,11 +103,9 @@ export const AudioMemoModal: React.FC<AudioMemoModalProps> = ({
           setRecordingSeconds((prev) => prev + 1);
         }, 1000);
       } else {
-        // Fallback simulated recording if browser mediaDevices not available
         simulateRecording();
       }
     } catch (_) {
-      // Permission denied or headless environment fallback
       simulateRecording();
     }
   };
@@ -105,16 +119,19 @@ export const AudioMemoModal: React.FC<AudioMemoModalProps> = ({
   };
 
   const stopRecording = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
 
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.stop();
     } else {
-      // Simulated memo for testing environment
+      // Add simulated memo if mediaDevices wasn't available
       const newMemo: AudioMemo = {
         id: `memo_${Date.now()}`,
         blobUrl: '',
-        durationSec: Math.max(3, recordingSeconds),
+        durationSec: recordingSeconds,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         coords: userCoords,
       };
@@ -124,24 +141,34 @@ export const AudioMemoModal: React.FC<AudioMemoModalProps> = ({
     setIsRecording(false);
   };
 
-  const togglePlayMemo = (memo: AudioMemo) => {
+  const handlePlayToggle = (memo: AudioMemo) => {
     if (activePlayingId === memo.id) {
       if (audioElementRef.current) {
         audioElementRef.current.pause();
       }
       setActivePlayingId(null);
     } else {
-      if (memo.blobUrl) {
-        if (!audioElementRef.current) {
-          audioElementRef.current = new Audio(memo.blobUrl);
-        } else {
-          audioElementRef.current.src = memo.blobUrl;
-        }
-        audioElementRef.current.onended = () => setActivePlayingId(null);
-        audioElementRef.current.play().catch(() => {});
+      if (audioElementRef.current) {
+        audioElementRef.current.pause();
       }
-      setActivePlayingId(memo.id);
-      setTimeout(() => setActivePlayingId(null), memo.durationSec * 1000);
+      if (memo.blobUrl) {
+        const audio = new Audio(memo.blobUrl);
+        audioElementRef.current = audio;
+        audio.onended = () => setActivePlayingId(null);
+        audio.play().catch(() => {});
+        setActivePlayingId(memo.id);
+      } else {
+        setActivePlayingId(memo.id);
+        setTimeout(() => setActivePlayingId(null), memo.durationSec * 1000);
+      }
+    }
+  };
+
+  const handleDeleteMemo = (id: string) => {
+    setMemos((prev) => prev.filter((m) => m.id !== id));
+    if (activePlayingId === id) {
+      if (audioElementRef.current) audioElementRef.current.pause();
+      setActivePlayingId(null);
     }
   };
 
@@ -165,108 +192,115 @@ export const AudioMemoModal: React.FC<AudioMemoModalProps> = ({
                 <span>Audio Safety Memo & Evidence</span>
               </h2>
               <p className={`text-[10px] ${theme.textMuted}`}>
-                Discreet 30-sec ambient recording locked to GPS
+                1-tap ambient voice recording stored on-device with GPS coordinates
               </p>
             </div>
           </div>
 
-          <button onClick={onClose} className="p-1 rounded-full text-slate-400 hover:text-white cursor-pointer">
+          <button
+            onClick={onClose}
+            className="p-1 rounded-full text-slate-400 hover:text-white cursor-pointer"
+            aria-label="Close"
+          >
             <X size={16} />
           </button>
         </div>
 
         {/* Recorder Centerpiece */}
-        <div className="p-4 rounded-2xl bg-black/40 border border-slate-800 flex flex-col items-center justify-center space-y-3">
-          {isRecording ? (
-            <>
-              <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-rose-600 flex items-center justify-center text-white shadow-xl shadow-rose-600/40 animate-pulse">
-                  <Mic size={32} />
-                </div>
-                <div className="absolute inset-0 rounded-full border-4 border-rose-400 animate-ping opacity-60 pointer-events-none" />
-              </div>
+        <div className="p-5 bg-slate-950/80 rounded-2xl border border-slate-800 flex flex-col items-center justify-center space-y-3">
+          <div className="relative">
+            <button
+              onClick={isRecording ? stopRecording : startRecording}
+              className={`w-20 h-20 rounded-full flex items-center justify-center transition shadow-2xl cursor-pointer ${
+                isRecording
+                  ? 'bg-red-600 hover:bg-red-500 animate-pulse text-white shadow-red-600/50'
+                  : `${theme.accentBg} text-white shadow-rose-500/30`
+              }`}
+              title={isRecording ? 'Stop Recording' : 'Start Audio Recording'}
+            >
+              {isRecording ? <Square size={26} fill="currentColor" /> : <Mic size={28} />}
+            </button>
 
-              <div className="font-mono text-2xl font-bold text-rose-300">
-                {formatSeconds(recordingSeconds)}
-              </div>
-              <div className="text-[10px] text-rose-300 uppercase tracking-wider font-bold">
-                ● Recording Ambient Audio & Evidence...
-              </div>
+            {isRecording && (
+              <div className="absolute -inset-2 rounded-full border-2 border-red-500 animate-ping opacity-60" />
+            )}
+          </div>
 
-              <button
-                onClick={stopRecording}
-                className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg"
-              >
-                <Square size={14} fill="currentColor" />
-                <span>Save Audio Evidence</span>
-              </button>
-            </>
-          ) : (
-            <>
-              <div className="w-16 h-16 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 flex items-center justify-center">
-                <Mic size={26} />
-              </div>
-
-              <div className="text-center space-y-1">
-                <div className="font-bold text-xs text-white">Record Situational Audio</div>
-                <div className={`text-[10px] ${theme.textMuted}`}>
-                  Discreetly capture harassment verbal notes or suspicious vehicle noises.
-                </div>
-              </div>
-
-              <button
-                onClick={startRecording}
-                className={`w-full py-2.5 rounded-xl ${theme.accentBg} text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-md ${theme.accentGlow}`}
-              >
-                <Mic size={14} />
-                <span>Start Audio Safety Memo</span>
-              </button>
-            </>
-          )}
+          <div className="text-center">
+            <div className="font-mono text-xl font-bold text-white">
+              {formatSeconds(recordingSeconds)}
+            </div>
+            <div className={`text-[10px] ${theme.textMuted} mt-0.5`}>
+              {isRecording ? 'Recording ambient audio & conversation...' : 'Tap microphone to start recording'}
+            </div>
+          </div>
         </div>
 
         {/* Saved Memos List */}
         <div className="flex-1 overflow-y-auto space-y-2 pr-1">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Encrypted Device Memos ({memos.length})
+          <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center justify-between">
+            <span>Saved Voice Evidence ({memos.length})</span>
+            <span className="text-[9px] text-emerald-400 font-medium">100% On-Device</span>
           </div>
 
           {memos.length === 0 ? (
-            <div className="py-4 text-center text-xs text-slate-500 italic">
+            <div className="text-center py-6 text-slate-500 text-xs">
               No audio memos recorded yet.
             </div>
           ) : (
             memos.map((memo) => (
               <div
                 key={memo.id}
-                className="p-2.5 rounded-xl bg-black/25 border border-slate-800 flex items-center justify-between text-xs"
+                className="p-3 rounded-2xl bg-black/30 border border-slate-800 flex items-center justify-between gap-2 text-xs"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <button
-                    onClick={() => togglePlayMemo(memo)}
-                    className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-300 flex items-center justify-center cursor-pointer"
+                    onClick={() => handlePlayToggle(memo)}
+                    className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-rose-300 flex items-center justify-center cursor-pointer transition"
+                    title={activePlayingId === memo.id ? 'Pause' : 'Play'}
                   >
-                    {activePlayingId === memo.id ? <Pause size={12} /> : <Play size={12} />}
+                    {activePlayingId === memo.id ? <Pause size={14} /> : <Play size={14} className="ml-0.5" />}
                   </button>
+
                   <div>
-                    <div className="font-bold text-white text-[11px]">
-                      Audio Note · {memo.timestamp}
+                    <div className="font-bold text-white flex items-center gap-1.5">
+                      <span>Recorded {memo.timestamp}</span>
+                      <span className="text-[10px] font-mono text-slate-400">({memo.durationSec}s)</span>
                     </div>
-                    <div className={`text-[9px] ${theme.textMuted} font-mono`}>
-                      {memo.durationSec}s · {memo.coords[0].toFixed(4)}°N, {memo.coords[1].toFixed(4)}°E
+                    <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
+                      <MapPin size={9} />
+                      <span>{memo.coords[0].toFixed(4)}°, {memo.coords[1].toFixed(4)}°</span>
                     </div>
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setMemos((prev) => prev.filter((m) => m.id !== memo.id))}
-                  className="p-1 text-slate-500 hover:text-red-400 cursor-pointer"
-                >
-                  <Trash2 size={12} />
-                </button>
+                <div className="flex items-center gap-1">
+                  {memo.blobUrl && (
+                    <a
+                      href={memo.blobUrl}
+                      download={`suraksha-audio-${memo.id}.webm`}
+                      className="p-1.5 text-slate-400 hover:text-sky-300 transition cursor-pointer"
+                      title="Download Audio File"
+                    >
+                      <Download size={14} />
+                    </a>
+                  )}
+
+                  <button
+                    onClick={() => handleDeleteMemo(memo.id)}
+                    className="p-1.5 text-slate-500 hover:text-red-400 transition cursor-pointer"
+                    title="Delete Memo"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
             ))
           )}
+        </div>
+
+        <div className="text-center text-[10px] text-slate-500 pt-1 border-t border-slate-800/80">
+          🔒 Audio memos are private and never uploaded without your consent.
         </div>
       </div>
     </div>

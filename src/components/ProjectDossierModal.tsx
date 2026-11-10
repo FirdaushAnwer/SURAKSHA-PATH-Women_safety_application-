@@ -23,7 +23,7 @@ export const ProjectDossierModal: React.FC<ProjectDossierModalProps> = ({ isOpen
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fade-in">
       <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
         {/* Header */}
         <div className="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
@@ -64,14 +64,14 @@ export const ProjectDossierModal: React.FC<ProjectDossierModalProps> = ({ isOpen
               "Shifting women’s mobility from reactive SOS alerts to predictive, infrastructure-led prevention."
             </p>
             <div className="text-[10px] text-slate-400 pt-1">
-              Category: <strong>Diploma & Higher Education – Open Submission</strong>
+              Category: <strong>Diploma & Higher Education – Open Innovation Submission</strong>
             </div>
           </div>
 
-          {/* Team Credentials (Slide 2) */}
+          {/* Team Credentials */}
           <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2">
             <div className="text-[10px] font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1">
-              <Users size={12} /> Team Composition
+              <Users size={12} /> Team Composition & Mentorship
             </div>
             <div className="grid grid-cols-2 gap-2 text-slate-300">
               <div className="p-2 bg-slate-900 rounded-xl border border-slate-800/80">
@@ -91,7 +91,7 @@ export const ProjectDossierModal: React.FC<ProjectDossierModalProps> = ({ isOpen
             </div>
           </div>
 
-          {/* Ground Evidence & Survey (Slide 4) */}
+          {/* Ground Evidence & Survey */}
           <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2">
             <div className="text-[10px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1">
               <FileCheck size={12} /> Field Survey Evidence (N = 120 Female Commuters)
@@ -112,10 +112,10 @@ export const ProjectDossierModal: React.FC<ProjectDossierModalProps> = ({ isOpen
             </div>
           </div>
 
-          {/* Core Technical Innovations (Slide 6, 7, 21) */}
+          {/* Core Technical Innovations */}
           <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2">
             <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1">
-              <Shield size={12} /> Key Architectural Novelties
+              <Shield size={12} /> Key Architectural Breakthroughs
             </div>
             <div className="space-y-1.5 text-[11px]">
               <div>
@@ -133,7 +133,7 @@ export const ProjectDossierModal: React.FC<ProjectDossierModalProps> = ({ isOpen
             </div>
           </div>
 
-          {/* Budget & Target TRL (Slide 10, 14, 17) */}
+          {/* Budget & Target TRL */}
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="bg-slate-950 p-3 rounded-2xl border border-slate-800">
               <div className="text-[10px] text-slate-500 uppercase font-semibold">Total Pilot Cost</div>

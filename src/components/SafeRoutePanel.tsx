@@ -76,7 +76,7 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
 
   const activeRoute = selectedRouteType === 'shortest' ? shortestRoute : surakshaRoute;
 
-  // Slide 9 Comparison Metrics
+  // Comparison Metrics
   const shortestDist = shortestRoute?.totalDistanceMeters ?? 1200;
   const safeDist = surakshaRoute?.totalDistanceMeters ?? 1380;
   const distDifference = safeDist - shortestDist;
@@ -164,9 +164,22 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-purple-500 ring-2 ring-purple-400/40 shrink-0" />
             <div className="flex-1 min-w-0">
-              <label className={`text-[10px] ${theme.textMuted} font-bold uppercase tracking-wider block`}>
-                Destination
-              </label>
+              <div className="flex items-center justify-between">
+                <label className={`text-[10px] ${theme.textMuted} font-bold uppercase tracking-wider block`}>
+                  Safe Destination
+                </label>
+                <button
+                  onClick={() => {
+                    const temp = originNodeId;
+                    setOriginNodeId(destinationNodeId);
+                    setDestinationNodeId(temp);
+                  }}
+                  className="text-[10px] text-rose-400 hover:text-rose-300 font-bold transition cursor-pointer flex items-center gap-0.5"
+                  title="Swap Origin and Destination"
+                >
+                  ⇄ Swap
+                </button>
+              </div>
               <select
                 value={destinationNodeId}
                 onChange={(e) => setDestinationNodeId(e.target.value)}
@@ -180,19 +193,42 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
               </select>
             </div>
           </div>
+
+          {/* Quick Destination Presets */}
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
+            <span className={`text-[9px] ${theme.textMuted} font-bold shrink-0 uppercase tracking-wider`}>Popular:</span>
+            {[
+              { id: 'node_hostel_campus', label: '🏫 Girls Hostel' },
+              { id: 'node_central_crossing', label: '🌸 Police Booth' },
+              { id: 'node_market_avenue', label: '🛍️ Lit Market' },
+              { id: 'node_metro', label: '🚇 Metro Gate 2' },
+            ].map((preset) => (
+              <button
+                key={preset.id}
+                onClick={() => setDestinationNodeId(preset.id)}
+                className={`px-2 py-0.5 rounded-full text-[10px] font-medium transition cursor-pointer shrink-0 border ${
+                  destinationNodeId === preset.id
+                    ? 'bg-rose-500/25 text-rose-200 border-rose-500/40 font-bold'
+                    : 'bg-black/20 text-slate-400 border-slate-700/50 hover:text-white'
+                }`}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Safety Detour Tolerance Selector (Slide 9 Workbench Integration) */}
+        {/* Safety Priority Level Selector */}
         <div className={`p-2 rounded-xl ${theme.bgCard} border ${theme.borderBase} flex items-center justify-between text-xs`}>
           <div className="flex items-center gap-1.5 text-[11px] font-bold">
             <Sliders size={12} className="text-rose-400" />
-            <span className={theme.textPrimary}>Safety Detour (α):</span>
+            <span className={theme.textPrimary}>Safety Priority:</span>
           </div>
 
           <div className="flex items-center gap-1">
             {[
-              { val: 1.5, label: 'Fast (1.5)' },
-              { val: 3.0, label: 'Safe (3.0)' },
+              { val: 1.5, label: 'Standard (1.5)' },
+              { val: 3.0, label: 'Balanced Safe (3.0)' },
               { val: 5.0, label: 'Max Guard (5.0)' },
             ].map((opt) => (
               <button
@@ -210,7 +246,7 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
           </div>
         </div>
 
-        {/* Route Algorithm Toggle Buttons (Slide 9 Focus) */}
+        {/* Route Algorithm Toggle Buttons */}
         <div className={`grid grid-cols-3 gap-1.5 p-1 ${theme.bgCard} rounded-xl border ${theme.borderBase}`}>
           <button
             onClick={() => setSelectedRouteType('suraksha')}
@@ -224,7 +260,7 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
               <ShieldCheck size={12} />
               <span>SurakshaPath</span>
             </div>
-            <span className="text-[9px] opacity-85 font-mono">α = {alpha} · Safe</span>
+            <span className="text-[9px] opacity-85 font-mono">Lit & Populated</span>
           </button>
 
           <button
@@ -239,7 +275,7 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
               <AlertTriangle size={12} />
               <span>Standard GPS</span>
             </div>
-            <span className="text-[9px] opacity-85 font-mono">α = 0 · Shortest</span>
+            <span className="text-[9px] opacity-85 font-mono">Shortest Only</span>
           </button>
 
           <button
@@ -259,21 +295,21 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
         </div>
       </div>
 
-      {/* Main Route Card & Slide 9 Simulation Result */}
+      {/* Main Route Card & Comparison */}
       <div className="p-3 space-y-3">
-        {/* Slide 9 Simulation Benchmark Card */}
+        {/* Safety Comparison Benchmark Card */}
         <div className={`${theme.bgCard} border ${theme.borderHighlight} rounded-2xl p-3.5 shadow-lg`}>
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1">
               <Sparkles size={11} />
-              Seva First 2026 Simulation Benchmark
+              Intelligent Safety Route Comparison
             </span>
             <span className={`text-[10px] ${theme.bgApp} ${theme.textSecondary} font-mono px-2 py-0.5 rounded-full border ${theme.borderBase}`}>
               {currentHour}:00 PM Evening
             </span>
           </div>
 
-          {/* Side by side comparison from Slide 9 */}
+          {/* Side by side comparison cards */}
           <div className="grid grid-cols-2 gap-2 text-xs">
             {/* SurakshaPath card */}
             <div className={`p-2.5 rounded-xl border transition ${
@@ -289,7 +325,7 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
                 {safeDist}m <span className={`text-[10px] ${theme.textMuted} font-normal`}>({surakshaRoute?.estimatedMinutes ?? 17} mins)</span>
               </div>
               <div className={`text-[10px] ${theme.textMuted} mt-0.5`}>
-                ✨ Avg Safety: <strong className="text-rose-300">{surakshaRoute?.averageSafetyScore ?? 0.76} / 1.0</strong>
+                ✨ Safety Index: <strong className="text-rose-300">{((surakshaRoute?.averageSafetyScore ?? 0.76) * 100).toFixed(0)}%</strong>
               </div>
               <div className="text-[9px] text-emerald-400 mt-1 font-medium">
                 Stays on well-lit main avenue · 0 dark alleys
@@ -310,7 +346,7 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
                 {shortestDist}m <span className={`text-[10px] ${theme.textMuted} font-normal`}>({shortestRoute?.estimatedMinutes ?? 15} mins)</span>
               </div>
               <div className={`text-[10px] ${theme.textMuted} mt-0.5`}>
-                ⚠️ Avg Safety: <strong className="text-red-400">{shortestRoute?.averageSafetyScore ?? 0.08} / 1.0</strong>
+                ⚠️ Safety Index: <strong className="text-red-400">{((shortestRoute?.averageSafetyScore ?? 0.08) * 100).toFixed(0)}%</strong>
               </div>
               <div className="text-[9px] text-red-400 mt-1 font-medium">
                 Passes 2 unlit alleys & liquor vend
@@ -323,7 +359,7 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
             <div className={`flex items-center gap-1.5 ${theme.textSecondary}`}>
               <span>💡</span>
               <span>
-                SurakshaPath trade-off: <strong className="text-rose-300">+{distDifference}m (+{pctIncrease}%)</strong> for <strong className="text-rose-300">+{timeDifferenceMins} mins</strong> extra walking time.
+                Peace of mind trade-off: <strong className="text-rose-300">+{distDifference}m (+{pctIncrease}%)</strong> for only <strong className="text-rose-300">+{timeDifferenceMins} mins</strong> extra walking time.
               </span>
             </div>
             <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 shrink-0 ml-1">
@@ -341,7 +377,7 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
                 <span>Pedestrian Safe Navigation</span>
               </h2>
               <p className={`text-[10px] ${theme.textMuted}`}>
-                {isSimulatingWalk ? 'Live GPS walk in progress · Tracking active' : 'Ready to start safe trip with E2EE Guardian share'}
+                {isSimulatingWalk ? 'Live GPS walk in progress · Tracking active' : 'Ready to start safe trip with Guardian live watch'}
               </p>
             </div>
 
@@ -408,7 +444,7 @@ export const SafeRoutePanel: React.FC<SafeRoutePanelProps> = ({
               className={`py-2 px-3 rounded-xl border ${theme.borderHighlight} hover:bg-rose-500/10 text-rose-200 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm`}
             >
               <Share2 size={13} className="text-rose-400" />
-              <span>Share E2EE Live Trip</span>
+              <span>Share Live Walk</span>
             </button>
 
             <button

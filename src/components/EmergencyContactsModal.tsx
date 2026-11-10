@@ -14,7 +14,9 @@ import {
   CheckCircle2,
   Star,
   X,
-  AlertCircle
+  AlertCircle,
+  Share2,
+  PhoneCall
 } from 'lucide-react';
 import { AppTheme } from '../utils/themeConfig';
 
@@ -38,6 +40,7 @@ interface EmergencyContactsModalProps {
   onClose: () => void;
   theme: AppTheme;
   tripCode: string;
+  userCoords?: [number, number] | null;
 }
 
 export const EmergencyContactsModal: React.FC<EmergencyContactsModalProps> = ({
@@ -45,6 +48,7 @@ export const EmergencyContactsModal: React.FC<EmergencyContactsModalProps> = ({
   onClose,
   theme,
   tripCode,
+  userCoords = [28.6945, 77.2060],
 }) => {
   const [contacts, setContacts] = useState<EmergencyContact[]>(() => {
     try {
@@ -59,7 +63,6 @@ export const EmergencyContactsModal: React.FC<EmergencyContactsModalProps> = ({
   const [newName, setNewName] = useState('');
   const [newRelation, setNewRelation] = useState('Sister');
   const [newPhone, setNewPhone] = useState('');
-  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Save to localStorage
   useEffect(() => {
@@ -69,6 +72,10 @@ export const EmergencyContactsModal: React.FC<EmergencyContactsModalProps> = ({
   }, [contacts]);
 
   if (!isOpen) return null;
+
+  const lat = userCoords ? userCoords[0].toFixed(5) : '28.6945';
+  const lng = userCoords ? userCoords[1].toFixed(5) : '77.2060';
+  const distressMessage = `🚨 SURAKSHA-PATH EMERGENCY ALERT: I am traveling alone and sharing my live route. Please check on me! Live map: https://surakshapath.org/live/${tripCode} | Current GPS: https://maps.google.com/?q=${lat},${lng}`;
 
   const handleAddContact = (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,7 +110,7 @@ export const EmergencyContactsModal: React.FC<EmergencyContactsModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 animate-fade-in">
-      <div className={`w-full max-w-sm rounded-3xl ${theme.bgCard} border ${theme.borderHighlight} p-5 shadow-2xl text-white space-y-4 max-h-[85vh] flex flex-col`}>
+      <div className={`w-full max-w-sm rounded-3xl ${theme.bgCard} border ${theme.borderHighlight} p-5 shadow-2xl text-white space-y-4 max-h-[88vh] flex flex-col`}>
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-slate-800">
           <div className="flex items-center gap-2">
@@ -112,13 +119,13 @@ export const EmergencyContactsModal: React.FC<EmergencyContactsModalProps> = ({
             </div>
             <div>
               <h2 className="text-sm font-bold text-white flex items-center gap-1.5">
-                <span>Emergency Guardians</span>
+                <span>Emergency Guardians & Sisterhood</span>
                 <span className="text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.2 rounded-full border border-rose-500/30 font-mono">
                   {contacts.length}
                 </span>
               </h2>
               <p className={`text-[10px] ${theme.textMuted}`}>
-                Auto-alerted when you trigger SOS or timer expires
+                Auto-alerted when you trigger SOS or walk timer expires
               </p>
             </div>
           </div>
@@ -126,9 +133,40 @@ export const EmergencyContactsModal: React.FC<EmergencyContactsModalProps> = ({
           <button
             onClick={onClose}
             className="p-1 rounded-full text-slate-400 hover:text-white cursor-pointer"
+            aria-label="Close"
           >
             <X size={16} />
           </button>
+        </div>
+
+        {/* Quick Emergency Hotlines */}
+        <div className="bg-slate-950/70 p-2 rounded-2xl border border-slate-800/80 space-y-1.5">
+          <div className="text-[10px] uppercase font-bold text-rose-300 tracking-wider flex items-center gap-1">
+            <PhoneCall size={11} /> 24/7 National Emergency Hotlines
+          </div>
+          <div className="grid grid-cols-3 gap-1.5">
+            <a
+              href="tel:112"
+              className="py-1.5 px-2 bg-red-600/90 hover:bg-red-500 rounded-xl text-center text-[10px] font-bold text-white shadow-sm flex flex-col items-center justify-center cursor-pointer"
+            >
+              <span className="font-mono text-xs">112</span>
+              <span className="text-[9px] opacity-80">All-in-One</span>
+            </a>
+            <a
+              href="tel:1091"
+              className="py-1.5 px-2 bg-purple-700/90 hover:bg-purple-600 rounded-xl text-center text-[10px] font-bold text-white shadow-sm flex flex-col items-center justify-center cursor-pointer"
+            >
+              <span className="font-mono text-xs">1091</span>
+              <span className="text-[9px] opacity-80">Women Helpline</span>
+            </a>
+            <a
+              href="tel:181"
+              className="py-1.5 px-2 bg-rose-700/90 hover:bg-rose-600 rounded-xl text-center text-[10px] font-bold text-white shadow-sm flex flex-col items-center justify-center cursor-pointer"
+            >
+              <span className="font-mono text-xs">181</span>
+              <span className="text-[9px] opacity-80">Distress Desk</span>
+            </a>
+          </div>
         </div>
 
         {/* Contacts List */}
@@ -183,23 +221,32 @@ export const EmergencyContactsModal: React.FC<EmergencyContactsModalProps> = ({
               </div>
 
               {/* Action buttons */}
-              <div className="flex items-center gap-2 pt-1 border-t border-slate-800/80">
+              <div className="flex items-center gap-1.5 pt-1 border-t border-slate-800/80">
                 <a
                   href={`tel:${contact.phone.replace(/[^0-9+]/g, '')}`}
-                  className="flex-1 py-1.5 px-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer"
+                  className="flex-1 py-1.5 px-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition cursor-pointer"
                 >
                   <Phone size={11} className="text-emerald-400" />
                   <span>Call</span>
                 </a>
 
+                {/* Direct WhatsApp SOS share */}
                 <a
-                  href={`sms:${contact.phone.replace(/[^0-9+]/g, '')}?body=${encodeURIComponent(
-                    `Hi, I'm sharing my SurakshaPath live safe-trip track with you: https://surakshapath.org/live/${tripCode}`
-                  )}`}
-                  className="flex-1 py-1.5 px-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer"
+                  href={`https://wa.me/${contact.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(distressMessage)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex-1 py-1.5 px-2 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-200 border border-emerald-700 font-bold text-[11px] flex items-center justify-center gap-1 transition cursor-pointer"
+                >
+                  <Share2 size={11} className="text-emerald-400" />
+                  <span>WhatsApp</span>
+                </a>
+
+                <a
+                  href={`sms:${contact.phone.replace(/[^0-9+]/g, '')}?body=${encodeURIComponent(distressMessage)}`}
+                  className="flex-1 py-1.5 px-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold text-[11px] flex items-center justify-center gap-1 transition cursor-pointer"
                 >
                   <MessageSquare size={11} className="text-sky-400" />
-                  <span>Send Link</span>
+                  <span>SMS</span>
                 </a>
               </div>
             </div>
@@ -207,61 +254,64 @@ export const EmergencyContactsModal: React.FC<EmergencyContactsModalProps> = ({
 
           {/* Add New Contact Form */}
           {isAdding ? (
-            <form onSubmit={handleAddContact} className="p-3 rounded-2xl bg-slate-950 border border-rose-500/40 space-y-2.5 text-xs animate-fade-in">
-              <div className="font-bold text-rose-300 text-xs">Add New Trusted Guardian</div>
+            <form onSubmit={handleAddContact} className="p-3 rounded-2xl bg-slate-900/90 border border-slate-700 space-y-2 text-xs animate-fade-in">
+              <div className="font-bold text-white text-xs">Add New Guardian</div>
               <input
                 type="text"
-                placeholder="Contact Name (e.g., Dipti Di)"
+                placeholder="Full Name (e.g. Diya)"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500"
                 required
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500"
               />
               <div className="grid grid-cols-2 gap-2">
                 <select
                   value={newRelation}
                   onChange={(e) => setNewRelation(e.target.value)}
-                  className="bg-slate-900 border border-slate-800 rounded-xl px-2 py-1.5 text-xs text-white focus:outline-none"
+                  className="bg-slate-950 border border-slate-800 rounded-xl px-2 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500"
                 >
                   <option value="Sister">Sister</option>
                   <option value="Mother">Mother</option>
                   <option value="Father">Father</option>
-                  <option value="Friend">Bestie / Friend</option>
+                  <option value="Brother">Brother</option>
+                  <option value="Friend">Friend</option>
+                  <option value="Partner">Partner</option>
                   <option value="Roommate">Roommate</option>
-                  <option value="Security">Security / Police</option>
+                  <option value="Colleague">Colleague</option>
                 </select>
                 <input
                   type="tel"
-                  placeholder="Phone Number"
+                  placeholder="+91..."
                   value={newPhone}
                   onChange={(e) => setNewPhone(e.target.value)}
-                  className="bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500"
                   required
+                  className="bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500 font-mono"
                 />
               </div>
+
               <div className="flex gap-2 pt-1">
-                <button
-                  type="submit"
-                  className={`flex-1 py-1.5 rounded-xl ${theme.accentBg} text-white font-bold text-xs cursor-pointer`}
-                >
-                  Save Guardian
-                </button>
                 <button
                   type="button"
                   onClick={() => setIsAdding(false)}
-                  className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs cursor-pointer"
+                  className="flex-1 py-1.5 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs cursor-pointer"
                 >
                   Cancel
+                </button>
+                <button
+                  type="submit"
+                  className={`flex-1 py-1.5 rounded-xl ${theme.accentBg} text-white font-bold text-xs cursor-pointer shadow`}
+                >
+                  Save Guardian
                 </button>
               </div>
             </form>
           ) : (
             <button
               onClick={() => setIsAdding(true)}
-              className="w-full py-2.5 rounded-2xl border border-dashed border-rose-500/40 hover:border-rose-500 text-rose-300 hover:text-white font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+              className={`w-full py-2.5 rounded-2xl border ${theme.borderHighlight} hover:bg-rose-500/10 text-rose-300 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer`}
             >
               <UserPlus size={14} />
-              <span>Add Another Trusted Guardian</span>
+              <span>Add Another Guardian</span>
             </button>
           )}
         </div>

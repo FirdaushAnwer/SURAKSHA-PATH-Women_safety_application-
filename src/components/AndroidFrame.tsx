@@ -33,6 +33,7 @@ interface AndroidFrameProps {
   onChangeTheme: (themeId: AppThemeId) => void;
   onOpenSimulator: () => void;
   onOpenDossier: () => void;
+  onOpenAiCompanion: () => void;
   onTriggerSOS: () => void;
   onOpenStealthCalculator: () => void;
   onTriggerFakeCall: () => void;
@@ -52,6 +53,7 @@ export const AndroidFrame: React.FC<AndroidFrameProps> = ({
   onChangeTheme,
   onOpenSimulator,
   onOpenDossier,
+  onOpenAiCompanion,
   onTriggerSOS,
   onOpenStealthCalculator,
   onTriggerFakeCall,
@@ -88,37 +90,37 @@ export const AndroidFrame: React.FC<AndroidFrameProps> = ({
   const navItems = [
     {
       id: 'route' as const,
-      label: 'Safe Path',
-      sub: 'A* Router',
+      label: 'Safe Route',
+      sub: 'Illuminated Path',
       icon: Navigation,
       badge: null,
     },
     {
       id: 'havens' as const,
-      label: 'Havens',
-      sub: '24/7 Shelters',
+      label: 'Safe Havens',
+      sub: '24/7 Sanctuaries',
       icon: Shield,
       badge: '4 Safe',
     },
     {
       id: 'report' as const,
-      label: '3-Tap Audit',
-      sub: 'Zero-PII',
+      label: 'Report Hazard',
+      sub: '100% Private',
       icon: PlusCircle,
       highlight: true,
       badge: null,
     },
     {
       id: 'h3' as const,
-      label: 'H3 Grid',
-      sub: 'Res 9 Heatmap',
+      label: 'Safety Heatmap',
+      sub: 'Live Zones',
       icon: Grid3X3,
       badge: '150m',
     },
     {
       id: 'civic' as const,
-      label: 'Civic Loop',
-      sub: 'PWD & Police',
+      label: 'Community Fixes',
+      sub: 'Civic Action',
       icon: Building2,
       badge: pendingCivicPromptCount > 0 ? `${pendingCivicPromptCount}` : null,
     },
@@ -189,7 +191,7 @@ export const AndroidFrame: React.FC<AndroidFrameProps> = ({
             title="Open Formula & A* Simulation Lab"
           >
             <Sliders size={13} className="text-rose-400" />
-            <span>Slide 9 Math Engine</span>
+            <span>Safety Engine Lab</span>
           </button>
 
           <button
@@ -200,7 +202,7 @@ export const AndroidFrame: React.FC<AndroidFrameProps> = ({
             title="View SEVA FIRST Innovation Challenge Details"
           >
             <Info size={13} className="text-sky-400" />
-            <span>Project Dossier</span>
+            <span>About SurakshaPath</span>
           </button>
 
           <button
@@ -357,6 +359,21 @@ export const AndroidFrame: React.FC<AndroidFrameProps> = ({
               aria-label="Walk With Me Timer"
             >
               <Clock size={14} />
+            </button>
+
+            {/* Suraksha Saheli AI Safety Companion */}
+            <button
+              onClick={onOpenAiCompanion}
+              className={`flex items-center gap-1 px-2 py-1.5 rounded-lg border font-bold text-[11px] transition cursor-pointer shadow-md ${
+                theme.isDark
+                  ? 'bg-rose-500/25 hover:bg-rose-500/40 text-rose-200 border-rose-500/50 shadow-rose-500/20'
+                  : 'bg-rose-500 hover:bg-rose-600 text-white shadow-rose-500/30'
+              }`}
+              title="Talk to Suraksha Saheli AI Safety Companion"
+              aria-label="Saheli AI Companion"
+            >
+              <Sparkles size={12} className="text-rose-300 animate-pulse" />
+              <span>Saheli AI</span>
             </button>
 
             {/* 1-Tap Emergency SOS Trigger */}
